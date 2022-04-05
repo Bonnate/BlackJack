@@ -52,7 +52,6 @@ public class BlackJack
 			int randPos1 = random.nextInt(MAX_CARD_COUNT);
 			int randPos2 = random.nextInt(MAX_CARD_COUNT);
 			
-			
 			if(randPos1 == randPos2)
 			{
 				continue;
@@ -98,6 +97,34 @@ public class BlackJack
 		DisplayInfo();
 	}
 	
+	public void Print(int tempVal)
+	{
+		if(tempVal > 1 && tempVal < 11)
+		{
+			System.out.printf("%-3d" + "ㅁㄴㅇ가나다라", tempVal);
+		}
+		else if(tempVal == 1)
+		{
+			System.out.print("A  ");
+		}
+		else if(tempVal == 11)
+		{
+			System.out.print("J  ");
+		}
+		else if(tempVal == 12)
+		{
+			System.out.print("Q  ");
+		}
+		else if(tempVal == 13)
+		{
+			System.out.print("K  ");
+		}
+		else
+		{
+			System.out.printf("%-3d", tempVal);
+		}
+	}
+	
 	//현재 카드들을 출력하는 함수
 	public void DisplayInfo()
 	{
@@ -109,59 +136,20 @@ public class BlackJack
 		{
 			int tempVal = mDealerCard.get(i);
 			
-			if(tempVal > 1 && tempVal < 11)
-			{
-				System.out.printf("%-3d", tempVal);
-			}
-			else if(tempVal == 1)
-			{
-				System.out.print("A  ");
-			}
-			else if(tempVal == 11)
-			{
-				System.out.print("J  ");
-			}
-			else if(tempVal == 12)
-			{
-				System.out.print("Q  ");
-			}
-			else if(tempVal == 13)
-			{
-				System.out.print("K  ");
-			}
+			Print(tempVal);
 		}
 		
 		if(mCode == FinishCode.NONE)
 		{
 			System.out.print('X');
 		}
+		
 		else
 		{
 			int tempVal = mDealerCard.get(mDealerCard.size() - 1);
 			
-			if(tempVal > 1 && tempVal < 11)
-			{
-				System.out.printf("%-3d", tempVal);
-			}
-			else if(tempVal == 1)
-			{
-				System.out.print("A  ");
-			}
-			else if(tempVal == 11)
-			{
-				System.out.print("J  ");
-			}
-			else if(tempVal == 12)
-			{
-				System.out.print("Q  ");
-			}
-			else if(tempVal == 13)
-			{
-				System.out.print("K  ");
-			}
+			Print(tempVal);
 		}
-		
-		
 		
 		System.out.println();
 		
@@ -170,26 +158,7 @@ public class BlackJack
 		{
 			int tempVal = mPlayerCard.get(i);
 			
-			if(tempVal > 1 && tempVal < 11)
-			{
-				System.out.printf("%-3d", tempVal);
-			}
-			else if(tempVal == 1)
-			{
-				System.out.print("A  ");
-			}
-			else if(tempVal == 11)
-			{
-				System.out.print("J  ");
-			}
-			else if(tempVal == 12)
-			{
-				System.out.print("Q  ");
-			}
-			else if(tempVal == 13)
-			{
-				System.out.print("K  ");
-			}
+			Print(tempVal);
 		}
 		
 		System.out.println();
@@ -201,6 +170,8 @@ public class BlackJack
 	public void InputPlayer()
 	{
 		Scanner Scan = new Scanner(System.in);
+		
+		//System.out.printf("딜러의 두번째 카드: %-3s, 다음 카드: %-3s\n", mDealerCard.get(1) >= 10 ? 10 : mDealerCard.get(1), mCards.peek() >= 10 ? 10 : mCards.peek());
 		
 		System.out.print("Hit or Stand? (H/S): ");
 		
@@ -396,5 +367,3 @@ public class BlackJack
 		
 	}
 }
-
-
