@@ -1,23 +1,24 @@
 package Main;
 import java.util.Scanner;
-import java.util.Queue;
-import java.util.LinkedList;
 import java.util.Vector;
 import java.util.Random;
+import java.util.LinkedList;
 
 public class BlackJack 
 {	
 	FinishCode mCode;
 	
-	//게임에 사용할 카드 개수 (기본은 13)
-	static public Integer MAX_CARD_COUNT = 13;
+	static public Integer MAX_CARD_COUNT = 52;
+	static public Integer MAX_CARD_TYPE = 4;
 	
 	//게임 중 사용할 카드를 집어넣는 큐
-	private Queue<Integer> mCards;
+	private LinkedList<Card> mCards;
 	
 	//게임 중 각 참가자의 카드를 저장하는 벡터
-	private Vector<Integer> mPlayerCard;
-	private Vector<Integer> mDealerCard;
+	private Vector<Card> mPlayerCard;
+	private Vector<Card> mDealerCard;
+	
+	static Random Rand = new Random();
 	
 	//생성자
 	public BlackJack()
@@ -34,48 +35,69 @@ public class BlackJack
 	//사용할 멤버변수들을 초기화한다
 	public void InitGame()
 	{
-		//임시로 카드들을 보관할 벡터 변수를 만든다
-		Vector<Integer> CardsTemp = new Vector<>();
-		
-		//벡터 변수에 연속되는 수를 삽입한다.
-		for(int i = 1; i <= MAX_CARD_COUNT; ++i)
-		{
-			CardsTemp.add(i);
-		}
-		
-		//랜덤 함수를 사용하기 위한 클래스를 생성한다.
-		Random random = new Random();
-		
-		//MAX_CARD_COUNT 까지의 랜덤수 두개를 받아 각 랜덤수의 위치에 해당하는 원소를 서로 바꾼다(swap)
-		for(int i = 0; i < 100; ++i)
-		{
-			int randPos1 = random.nextInt(MAX_CARD_COUNT);
-			int randPos2 = random.nextInt(MAX_CARD_COUNT);
-			
-			if(randPos1 == randPos2)
-			{
-				continue;
-			}
-			
-			int tempVal = CardsTemp.get(randPos1);
-			
-			CardsTemp.set(randPos1, CardsTemp.get(randPos2));
-			CardsTemp.set(randPos2, tempVal);  
-		}
+		String tempSuit = "?";
 		
 		//무작위로 섞은 MAX_CARD_COUNT개의 카드를 Queue에 삽입한다.
 		//함수가 끝나면 CardsTemp는 사라진다.
-		for(int i = 0; i < MAX_CARD_COUNT; ++i)
+		for(int i = 1; i <= MAX_CARD_COUNT / MAX_CARD_TYPE; ++i)
 		{
-			mCards.add(CardsTemp.get(i));
+			for(int j = 0; j < MAX_CARD_TYPE; ++j)
+			{
+				switch(j)
+				{
+					case 0: 
+					{
+						tempSuit = "◆";
+						
+						break;
+					}
+					
+					case 1: 
+					{
+						tempSuit = "♣";
+						
+						break;
+					}
+					
+					case 2: 
+					{
+						tempSuit = "♥";
+						
+						break;
+					}
+					
+					case 3: 
+					{
+						tempSuit = "♠";
+						
+						break;
+					}
+					
+					default:
+					{
+						System.out.println("Index Error");
+						System.exit(0);
+					}
+				}
+				
+				mCards.add(new Card(tempSuit, i));
+			}
 		}
+		
+		
+		int randPos;
 		
 		//딜러와 플레이어에게 중복되지 않은 카드를 각 두장씩 나눠준다.
 		//Queue의 Poll함수로 선두에있는 원소를 리턴하며 제거한다.
 		for(int i = 0; i < 2; ++i)
 		{
-			mPlayerCard.add(mCards.poll());
-			mDealerCard.add(mCards.poll());
+			randPos = Rand.nextInt(mCards.size());
+			mPlayerCard.add(mCards.get(randPos));
+			mCards.remove(randPos);
+			
+			randPos = Rand.nextInt(mCards.size());
+			mDealerCard.add(mCards.get(randPos));
+			mCards.remove(randPos);
 		}
 	}
 	
@@ -96,59 +118,33 @@ public class BlackJack
 		//현재 카드들을 한번 더 출력
 		DisplayInfo();
 	}
-	
-	public void Print(int tempVal)
-	{
-		if(tempVal > 1 && tempVal < 11)
-		{
-			System.out.printf("%-3d" + "ㅁㄴㅇ가나다라", tempVal);
-		}
-		else if(tempVal == 1)
-		{
-			System.out.print("A  ");
-		}
-		else if(tempVal == 11)
-		{
-			System.out.print("J  ");
-		}
-		else if(tempVal == 12)
-		{
-			System.out.print("Q  ");
-		}
-		else if(tempVal == 13)
-		{
-			System.out.print("K  ");
-		}
-		else
-		{
-			System.out.printf("%-3d", tempVal);
-		}
-	}
-	
+
 	//현재 카드들을 출력하는 함수
 	public void DisplayInfo()
 	{
+		Card tempCard;
+		
 		System.out.println("------------- Jack's BlackJack Game -------------");
 		
 		System.out.print("  # Dealer: ");
 		//0은 A로, 11이상은 각 J Q K로 출력한다 그 외는 정수 그대로
 		for(int i = 0; i < mDealerCard.size() - 1; ++i)
 		{
-			int tempVal = mDealerCard.get(i);
+			tempCard = mDealerCard.get(i);
 			
-			Print(tempVal);
+			tempCard.DisplayCard();
 		}
 		
 		if(mCode == FinishCode.NONE)
 		{
-			System.out.print('X');
+			System.out.print("XX");
 		}
 		
 		else
 		{
-			int tempVal = mDealerCard.get(mDealerCard.size() - 1);
+			tempCard = mDealerCard.get(mDealerCard.size() - 1);
 			
-			Print(tempVal);
+			tempCard.DisplayCard();
 		}
 		
 		System.out.println();
@@ -156,9 +152,9 @@ public class BlackJack
 		System.out.print("  # Player: ");
 		for(int i = 0; i < mPlayerCard.size(); ++i)
 		{
-			int tempVal = mPlayerCard.get(i);
+			tempCard = mPlayerCard.get(i);
 			
-			Print(tempVal);
+			tempCard.DisplayCard();
 		}
 		
 		System.out.println();
@@ -228,10 +224,12 @@ public class BlackJack
 	//Hit을 하면 플레이어의 카드벡터에 전체카드큐에서 poll하여 추가한다.
 	private void Hit()
 	{
-		mPlayerCard.add(mCards.poll());
+		int randPos = Rand.nextInt(mCards.size());
+		mPlayerCard.add(mCards.get(randPos));
+		mCards.remove(randPos);
 		
 		//만약 추가했을 때 총 값이 21을 초과하면 플레이어는 BUSTED한다.
-		if(CalcPrice(true) > 21)
+		if(CalcPrice(mPlayerCard) > 21)
 		{
 			mCode = FinishCode.PLAYERBUSTED;
 		}
@@ -240,13 +238,15 @@ public class BlackJack
 	//Stand을 하면 딜러의 카드벡터에 전체카드 큐를 17이상이 될때까지 전체카드큐에서 poll한다.
 	private void Stand()
 	{
-		while(CalcPrice(false) < 17)
+		while(CalcPrice(mDealerCard) < 17)
 		{
-			mDealerCard.add(mCards.poll());
+			int randPos = Rand.nextInt(mCards.size());
+			mDealerCard.add(mCards.get(randPos));
+			mCards.remove(randPos);
 		}
 		
 		//만약에 21보다 커지면 딜러는 BUSTED한다.
-		if(CalcPrice(false) > 21)
+		if(CalcPrice(mDealerCard) > 21)
 		{
 			mCode = FinishCode.DEALERBUSTED;
 		}
@@ -257,46 +257,46 @@ public class BlackJack
 		}
 	}
 	
-	//플레이어 또는 딜러의 카드값을 계산한다. 매개변수가 true이면 플레이어, false이면 딜러.
-	//★ 두개를 flag할때 bool이 나은가 enum이 나은가 int형으로 받아올지 질문하기 ★
-	private int CalcPrice(boolean isPlayer)
+	private int CalcPrice(Vector<Card> cards)
 	{
 		int sumRes = 0;
-		int tempValue;
+		Card tempCard = null;
 		
-		if(isPlayer)
+		for(int i = 0; i < cards.size(); ++i)
 		{
-			for(int i = 0; i < mPlayerCard.size(); ++i)
-			{
-				tempValue = mPlayerCard.get(i);
-				
-				//받아온 값이 10보다 크면 그 값은 10으로한다 (J Q K는 10으로 간주함)
-				if(tempValue > 10) tempValue = 10;
-				
-				sumRes += tempValue;
-			}
+			tempCard = cards.get(i);
+			
+			sumRes += tempCard.GetRank();
 		}
 		
-		else
+		//21을 초과한 시점에서
+		//A 카드를 가지고 있고, 그 카드가 11로 계산되고 있을경우
+		if(sumRes > 21)
 		{
-			for(int i = 0; i < mDealerCard.size(); ++i)
+			for(int i = 0; i < cards.size(); ++i)
 			{
-				tempValue = mDealerCard.get(i);
-				
-				if(tempValue > 10) tempValue = 10;
-				
-				sumRes += tempValue;
+				//랭크가 11이다? -> Calcto11이 True인경우?
+				if(cards.get(i).GetRank() == 11)
+				{
+					//해당 A카드의 11여부를 false로 하고
+					cards.get(i).SetACalcTo11(false);
+					//11 -> 1로 했기에 10을 빼서 리턴한다.
+					sumRes -= 10;
+					
+					//디버그용 출력
+					System.out.println("A 카드가 11에서 1로 값 변경됨");
+				}
 			}
 		}
 		
 		return sumRes;
 	}
-	
+
 	//게임이 끝나면 누가 이겼는지 계산한다.
 	private void CalcWinner()
 	{
-		int playerVal = CalcPrice(true);
-		int dealerVal = CalcPrice(false);
+		int playerVal = CalcPrice(mPlayerCard);
+		int dealerVal = CalcPrice(mDealerCard);
 		
 		if(playerVal > 21 && dealerVal > 21)
 		{
@@ -363,7 +363,7 @@ public class BlackJack
 		}
 		
 		//사용자가 쉽게 결과를 파악하기 위해 플레이어와 딜러의 각 합계를 출력해준다
-		System.out.println("\t [Player:" + CalcPrice(true) + " : Dealer:" + CalcPrice(false) + ']');
+		System.out.println("\t [Player:" + CalcPrice(mPlayerCard) + " : Dealer:" + CalcPrice(mDealerCard) + ']');
 		
 	}
 }
