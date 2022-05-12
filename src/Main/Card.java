@@ -54,7 +54,7 @@ public class Card
 		mIsACalc11 = flag;
 	}
 	
-	public void DisplayCard()
+	public String DisplayCard()
 	{
 		String tempRank = null;
 		
@@ -90,6 +90,6 @@ public class Card
 			}
 		}
 		
-		System.out.print(tempRank + "(" + mSuit + ")  ");
+		return tempRank + "(" + mSuit + ")  ";
 	}
 }
