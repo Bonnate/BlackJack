@@ -37,8 +37,6 @@ public class BlackJack
 	{
 		String tempSuit = "?";
 		
-		//무작위로 섞은 MAX_CARD_COUNT개의 카드를 Queue에 삽입한다.
-		//함수가 끝나면 CardsTemp는 사라진다.
 		for(int i = 1; i <= MAX_CARD_COUNT / MAX_CARD_TYPE; ++i)
 		{
 			for(int j = 0; j < MAX_CARD_TYPE; ++j)
@@ -363,7 +361,6 @@ public class BlackJack
 		}
 		
 		//사용자가 쉽게 결과를 파악하기 위해 플레이어와 딜러의 각 합계를 출력해준다
-		System.out.println("\t [Player:" + CalcPrice(mPlayerCard) + " : Dealer:" + CalcPrice(mDealerCard) + ']');
-		
+		System.out.println("\t [Player:" + CalcPrice(mPlayerCard) + " : Dealer:" + CalcPrice(mDealerCard) + ']');		
 	}
 }
